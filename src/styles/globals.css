@@ -1,3 +1,45 @@
+/**
+ * @file src/styles/globals.css
+ * @description 전역 CSS 스타일 및 커스텀 애니메이션 유틸리티
+ *
+ * Tailwind CSS v4 방식으로 작성되어 있다.
+ *   @import 'tailwindcss' : Tailwind 전체 기능을 로드
+ *   @source "../src"      : src 폴더 아래 파일들을 스캔해 클래스를 생성
+ *   @layer base           : 브라우저 기본값 리셋 및 전역 스타일
+ *   @layer utilities      : 커스텀 유틸리티 클래스 및 키프레임 정의
+ *
+ * 사용처: src/pages/_app.tsx 에서 import 되어 전체 앱에 적용됨
+ *
+ * ── 커스텀 클래스 목록 ──
+ *
+ * .gradient-text
+ *   파란 계열 그라디언트 텍스트 효과 (Hero 제목, About 소제목 등에 사용)
+ *   사용처: Hero.tsx, About.tsx, Footer.tsx, JobProposalForm.tsx
+ *
+ * .animate-fade-in-up / left / right
+ *   요소가 아래/왼쪽/오른쪽에서 위/오른쪽/왼쪽으로 페이드인
+ *   주로 mounted 상태가 true 가 된 직후 Hero 섹션 요소들에 적용
+ *
+ * .animate-float / .animate-float-slow
+ *   요소가 위아래로 천천히 부유하는 무한 애니메이션
+ *   Hero 배경 블롭에 적용
+ *
+ * .animate-scale-in
+ *   요소가 약간 축소된 상태에서 원래 크기로 확대되며 나타남
+ *
+ * .animate-slide-down
+ *   요소가 위에서 아래로 미끄러지듯 등장 (Hero 상태 배지에 사용)
+ *
+ * .reveal / .reveal-left / .reveal-right
+ *   스크롤 진입 전 숨김 상태 → .is-visible 클래스 추가 시 등장
+ *   About.tsx, ProjectList.tsx의 RevealBlock 컴포넌트와 함께 동작
+ *   IntersectionObserver가 요소를 감지하면 is-visible 을 추가한다
+ *
+ * .delay-100 ~ .delay-700
+ *   animation-delay 와 transition-delay 를 동시에 적용하는 딜레이 클래스
+ *   여러 요소를 순차적으로 등장시킬 때 사용 (예: delay-100, delay-200, ...)
+ */
+
 @import 'tailwindcss';
 
 @source "../src";
@@ -11,27 +53,137 @@
     border-style: solid;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
-    background-color: #f5f5f0;
-    color: #1a1a2e;
+    background-color: #f0f5ff; /* 전체 페이지 배경: 연한 파란 톤 */
+    color: #0f172a;
     -webkit-font-smoothing: antialiased;
   }
 }
 
 @layer utilities {
+  /* 파란 그라디언트 텍스트 — Hero 제목, About 소제목, Footer 헤딩 등에 사용 */
   .gradient-text {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 60%, #a855f7 100%);
+    background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 60%, #38bdf8 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
+  /* ── 키프레임 정의 ── */
+
+  /* 커서 깜빡임 — Hero 타이핑 커서에 사용 */
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
   }
+
+  /* 아래에서 위로 페이드인 */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 왼쪽에서 오른쪽으로 페이드인 */
+  @keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-32px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* 오른쪽에서 왼쪽으로 페이드인 */
+  @keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(32px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* 위아래 부유 (약간의 회전 포함) — Hero 배경 블롭 */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33%       { transform: translateY(-18px) rotate(1deg); }
+    66%       { transform: translateY(-8px) rotate(-1deg); }
+  }
+
+  /* 위아래 부유 (느리고 부드럽게) — Hero 배경 블롭 */
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-24px); }
+  }
+
+  /* 배경 shimmer 효과 (현재 미사용, 필요 시 활용 가능) */
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* 축소 → 원래 크기로 확대되며 등장 */
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* 위에서 아래로 미끄러지듯 등장 — Hero 상태 배지 */
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── 애니메이션 유틸리티 클래스 ── */
+  .animate-fade-in-up    { animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+  .animate-fade-in-left  { animation: fadeInLeft 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+  .animate-fade-in-right { animation: fadeInRight 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+  .animate-scale-in      { animation: scaleIn 0.6s cubic-bezier(0.22,1,0.36,1) both; }
+  .animate-slide-down    { animation: slideDown 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+  .animate-float         { animation: float 7s ease-in-out infinite; }
+  .animate-float-slow    { animation: floatSlow 9s ease-in-out infinite; }
+
+  /* ── 스크롤 진입 애니메이션 클래스 ──
+     RevealBlock 컴포넌트(About, ProjectList)에서 IntersectionObserver와 함께 사용.
+     초기 상태는 숨김, .is-visible 추가 시 CSS transition으로 등장한다.
+     scroll-behavior: smooth 는 페이지 전환 슬라이드 문제로 제거됨
+     (해시 링크 스무스 스크롤은 Header.tsx의 JS handleAnchorClick 에서 처리) */
+
+  /* 아래 → 위로 등장 (기본) */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 왼쪽 → 오른쪽으로 등장 */
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-28px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal-left.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* 오른쪽 → 왼쪽으로 등장 — About 스킬 카드에 사용 */
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(28px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal-right.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* ── 순차 등장 딜레이 클래스 ──
+     animation-delay와 transition-delay를 동시에 설정.
+     여러 요소를 순차적으로 나타낼 때 사용 (예: delay-100, delay-200 ...) */
+  .delay-0   { animation-delay: 0s;    transition-delay: 0s; }
+  .delay-100 { animation-delay: 0.1s; transition-delay: 0.1s; }
+  .delay-150 { animation-delay: 0.15s; transition-delay: 0.15s; }
+  .delay-200 { animation-delay: 0.2s; transition-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; transition-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; transition-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; transition-delay: 0.5s; }
+  .delay-600 { animation-delay: 0.6s; transition-delay: 0.6s; }
+  .delay-700 { animation-delay: 0.7s; transition-delay: 0.7s; }
 }
