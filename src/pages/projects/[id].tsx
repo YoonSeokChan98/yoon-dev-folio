@@ -27,7 +27,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import getNotionData, { getNotionPage, getNotionBlocks } from '@/lib/notion';
-import NotionRenderer from '@/components/NotionRenderer';
+import NotionRenderer, { richText } from '@/components/NotionRenderer';
 import type { NotionProject } from '@/types/notion';
 import { NOTION_TAG_COLOR } from '@/lib/notionColors';
 
@@ -47,7 +47,7 @@ export default function ProjectDetailPage({ project, blocks }: Props) {
   const endDate = item.WorkPeriod.date?.end || '';
   const description = item.Description.rich_text[0]?.plain_text || '';
   const github = item.Github?.url || null;
-  const teamComposition = item.TeamComposition?.rich_text[0]?.plain_text || '';
+  const teamComposition = item.TeamComposition?.rich_text || [];
 
   // 커버 이미지: external(URL 등록) 우선, 없으면 file(직접 업로드)
   const coverImg = project.cover?.external?.url || project.cover?.file?.url || '';
@@ -104,7 +104,9 @@ export default function ProjectDetailPage({ project, blocks }: Props) {
             </h1>
 
             {description && (
-              <p className="text-slate-500 text-[15px] leading-relaxed mb-6">{description}</p>
+              <p className="text-slate-500 text-[15px] leading-relaxed mb-6">
+                {richText(item.Description.rich_text)}
+              </p>
             )}
 
             {/* 기간 / 팀 구성 / GitHub 링크 */}
@@ -115,10 +117,10 @@ export default function ProjectDetailPage({ project, blocks }: Props) {
                   <p className="text-slate-600 font-medium">{period}</p>
                 </div>
               )}
-              {teamComposition && (
+              {teamComposition.length > 0 && (
                 <div>
                   <p className="text-[10px] font-bold tracking-widest uppercase text-slate-300 mb-1">팀 구성</p>
-                  <p className="text-slate-600 font-medium">{teamComposition}</p>
+                  <p className="text-slate-600 font-medium">{richText(teamComposition)}</p>
                 </div>
               )}
               {github && (

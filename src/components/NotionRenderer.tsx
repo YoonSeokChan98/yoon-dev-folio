@@ -39,7 +39,7 @@ import React from 'react';
  * @param texts - Notion block의 rich_text 배열
  * @returns React.ReactNode 배열
  */
-const richText = (texts: any[]): React.ReactNode =>
+export const richText = (texts: any[]): React.ReactNode =>
   texts?.map((t: any, i: number) => {
     let node: React.ReactNode = t.plain_text;
     if (t.annotations?.bold)          node = <strong key={i}>{node}</strong>;
