@@ -16,40 +16,10 @@
  * 카드 렌더링은 ProjectItem 컴포넌트에 위임 (레이아웃, 데이터 표시 담당).
  */
 
-import { useRef, useEffect, useState } from 'react';
 import ProjectItem from './ProjectItem';
+import RevealBlock from '@/components/ui/RevealBlock';
+import SectionLabel from '@/components/ui/SectionLabel';
 import type { NotionProject } from '@/types/notion';
-
-/**
- * 스크롤 진입 애니메이션 래퍼
- * globals.css 의 .reveal 클래스를 사용하며, 뷰포트 진입 시 .is-visible 을 추가해 등장시킨다.
- */
-function RevealBlock({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.08 } // 8% 진입 시 트리거 (카드가 크므로 낮게 설정)
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className={`reveal ${visible ? 'is-visible' : ''} delay-${delay}`}>
-      {children}
-    </div>
-  );
-}
 
 const ProjectList = ({ projects }: { projects: NotionProject[] }) => {
   return (
@@ -57,10 +27,7 @@ const ProjectList = ({ projects }: { projects: NotionProject[] }) => {
 
       {/* 섹션 헤더 */}
       <div className="max-w-4xl mx-auto px-6 pt-14 pb-10">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="h-px w-6 bg-blue-500" />
-          <p className="text-xs font-bold tracking-[0.2em] uppercase text-blue-500">Portfolio</p>
-        </div>
+        <SectionLabel text="Portfolio" className="mb-3" />
         <div className="flex items-end justify-between gap-4">
           <h1 className="text-4xl sm:text-5xl font-black text-[#0f172a] tracking-tighter leading-tight">
             Selected<br />
@@ -84,7 +51,8 @@ const ProjectList = ({ projects }: { projects: NotionProject[] }) => {
         {projects.map((project, index) => (
           <RevealBlock
             key={project.id}
-            delay={Math.min(index * 100, 400)} // 최대 400ms 딜레이
+            delay={Math.min(index * 100, 400)}
+            threshold={0.08}
           >
             {/* ProjectItem: 가로형 카드, 짝수/홀수 인덱스에 따라 이미지 좌/우 교대 배치 */}
             <ProjectItem data={project} index={index} />

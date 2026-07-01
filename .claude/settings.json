@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/scripts/verify-todo.js",
+            "timeout": 5,
+            "statusMessage": "하네스 작업 컨텍스트 로딩 중...",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/scripts/sync-todo.js",
+            "timeout": 10,
+            "statusMessage": "실시간 진행률 동기화 중...",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/scripts/task-ctl.js switch",
+            "timeout": 5,
+            "statusMessage": "세션 종료 — 진행 중 태스크 상태 보존 중...",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

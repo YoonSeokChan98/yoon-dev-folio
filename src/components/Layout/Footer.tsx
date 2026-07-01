@@ -14,6 +14,8 @@
  */
 
 import Link from 'next/link';
+import SectionLabel from '@/components/ui/SectionLabel';
+import ArrowIcon from '@/components/ui/ArrowIcon';
 
 const Footer = () => {
   return (
@@ -29,10 +31,7 @@ const Footer = () => {
 
       <div className="relative max-w-7xl mx-auto px-6 py-28">
         {/* 섹션 레이블 */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-px w-6 bg-blue-500" />
-          <p className="text-xs font-bold tracking-[0.2em] uppercase text-blue-400">Get In Touch</p>
-        </div>
+        <SectionLabel text="Get In Touch" dark className="mb-6" />
 
         {/* 메인 헤딩 */}
         <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-none mb-8 text-white">
@@ -53,9 +52,7 @@ const Footer = () => {
           className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-blue-600 text-white font-bold text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/40 hover:-translate-y-1 hover:shadow-blue-500/30"
         >
           제안 보내기
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
+          <ArrowIcon />
         </Link>
 
         {/* 하단 바: 로고 + 소셜 링크 + 저작권 */}

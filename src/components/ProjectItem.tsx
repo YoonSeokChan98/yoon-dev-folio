@@ -21,6 +21,8 @@ import React from 'react';
 import Link from 'next/link';
 import type { NotionProject } from '@/types/notion';
 import { NOTION_TAG_COLOR } from '@/lib/notionColors';
+import ArrowIcon from '@/components/ui/ArrowIcon';
+import TagBadge from '@/components/ui/TagBadge';
 
 interface ProjectItemProps {
   data: NotionProject;
@@ -82,13 +84,12 @@ const ProjectItem = ({ data, index }: ProjectItemProps) => {
             {period && <span className="text-[11px] font-medium text-slate-400">{period}</span>}
             <div className="flex flex-wrap gap-1.5">
               {projectTypes.map((t) => (
-                <span
+                <TagBadge
                   key={t.id}
+                  name={t.name}
                   style={NOTION_TAG_COLOR[t.color] ?? NOTION_TAG_COLOR.default}
-                  className="px-2 py-0.5 text-[10px] font-semibold rounded-full"
-                >
-                  {t.name}
-                </span>
+                  size="xs"
+                />
               ))}
             </div>
           </div>
@@ -107,33 +108,25 @@ const ProjectItem = ({ data, index }: ProjectItemProps) => {
         {/* 하단: 기술 스택 태그 + 오른쪽 화살표 */}
         <div className="flex items-end justify-between gap-4 mt-6">
           <div className="flex flex-wrap gap-1.5">
-            {/* 최대 5개 태그만 표시 */}
             {techStack.slice(0, 5).map((tech) => (
-              <span
+              <TagBadge
                 key={tech.id}
+                name={tech.name}
                 style={NOTION_TAG_COLOR[tech.color] ?? NOTION_TAG_COLOR.default}
-                className="px-2.5 py-1 text-[10px] font-medium rounded-md"
-              >
-                {tech.name}
-              </span>
+                size="sm"
+              />
             ))}
-            {/* 5개 초과분: "+N" 표시 */}
             {techStack.length > 5 && (
-              <span className="px-2.5 py-1 text-[10px] font-medium rounded-md bg-blue-50 text-blue-400">
-                +{techStack.length - 5}
-              </span>
+              <TagBadge
+                name={`+${techStack.length - 5}`}
+                style={{ background: 'rgb(239 246 255)', color: 'rgb(147 197 253)' }}
+                size="sm"
+              />
             )}
           </div>
 
           {/* 호버 시 오른쪽으로 이동하는 화살표 */}
-          <svg
-            className="w-5 h-5 text-blue-200 group-hover:text-blue-500 group-hover:translate-x-1 transition-all shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
+          <ArrowIcon className="w-5 h-5 text-blue-200 group-hover:text-blue-500 group-hover:translate-x-1 transition-all shrink-0" />
         </div>
       </div>
     </Link>
